@@ -1,8 +1,4 @@
 
-![image](https://user-images.githubusercontent.com/75033256/114639470-31832e80-9c8b-11eb-9ddb-a4a558d06f85.png)
-
-
-
 D3 Homework - Data Journalism and D3
 
 
