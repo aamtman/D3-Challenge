@@ -31,14 +31,14 @@ d3.select("body")
     .style("opacity", 0);
 
 // Retrieve data from the CSV file and execute everything below
-d3.csv("data.csv").then(function (data, err) {
+d3.csv("assets/data/data.csv").then(function (healthData, err) {
         if (err)
             throw err;
         console.log(healthData);
         // parse data
         healthData.forEach((data) => {
             data.poverty = +data.poverty;
-            data.healthcare = +healthcare;
+            data.healthcare = +data.healthcare;
         });
 
         var xLinearScale = d3.scaleLinear().range([0, width]);
@@ -90,20 +90,23 @@ d3.csv("data.csv").then(function (data, err) {
             .data(healthData)
             .enter()
             .append("circle")
-            .attr("cx", d => xLinearScale(d.healthcare)
+            .attr("cx", d => xLinearScale(d.healthcare))
                 .attr("cy", d => yLinearScale(d.poverty))
                 .attr("r", 20)
                 .attr("fill", "green")
                 .attr("opacity", ".5")
+                .on("mouseover", function (healthData) {
+                    toolTip.show(healthData);
+                })
                 .on("mouseout", function (data, index) {
                     toolTip.hide(data);
-                }));
+                });
 
         var toolTip = d3.tip()
-            .attr("class", "tooltip")
+            .attr("class", "d3-tip")
             .offset([80, -60])
             .html(function (d) {
-                return (abbr + '%');
+                return (`${d.state}<br>poverty: ${d.poverty}<br>healthcare: ${d.healthcare}`);
             });
 
         chartGroup.call(toolTip);
@@ -111,15 +114,16 @@ d3.csv("data.csv").then(function (data, err) {
 
         // Updating circles group with a transition to
         // new circles
-        circlesGroup.call(toolTip);
+        // circlesGroup.call(toolTip);
 
-        circlesGroup.on("mouseover", function (healthData) {
-            toolTip.show(healthData);
-        })
+        // circlesGroup.on("mouseover", function (healthData) {
+            // toolTip.show(healthData);
+        // })
+
             // onmouseout event
-            .on("mouseout", function (healthData, index) {
-                toolTip.hide(healthData);
-            });
+            // .on("mouseout", function (healthData, index) {
+                // toolTip.hide(healthData);
+            // });
 
         chartGroup.append("text")
             .style("font-size", "10px")
@@ -128,10 +132,10 @@ d3.csv("data.csv").then(function (data, err) {
             .enter()
             .append("tspan")
             .attr("x", function (data) {
-                return xLinearScale(data.healthcare + 1.4);
+                return xLinearScale(data.healthcare -.1);
             })
             .attr("y", function (data) {
-                return yLinearScale(data.poverty + .2);
+                return yLinearScale(data.poverty -.1);
             })
             .text(function (data) {
                 return data.abbr;
@@ -149,7 +153,8 @@ d3.csv("data.csv").then(function (data, err) {
             .attr("transform", `translate(${width / 1.5}, ${height + margin.top + 40})`)
             .attr("class", "axisText")
             .text("In Poverty (%)")
+        })
             .catch(function (error) {
                 console.log(error);
             });
-    }
+    
